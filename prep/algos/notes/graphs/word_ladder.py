@@ -47,5 +47,5 @@ def traverse(graph, starting_vertex):
 
 if __name__ == "__main__":
     for vertex, path in traverse(word_graph, "FOOL"):
-        if vertex == "SAGE":
+        if vertex == "HIDE":
             print("->".join(path))

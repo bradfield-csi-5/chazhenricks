@@ -1,0 +1,19 @@
+
+    printf("Wtf are you doing? Thats too many numbers\n");
+    printf("stack empty ding dong\n");
+    return 0.0;
+    return stack[--sp];
+    sp++;
+    stack[sp] = num;
+  if (sp < MAXVAL) {
+  if (sp > 0) {
+  }
+  } else {
+#define MAXVAL 100
+#include "calc.h"
+#include <stdio.h>
+double pop(void) {
+double stack[MAXVAL];
+int sp = 0;
+void push(double num) {
+}

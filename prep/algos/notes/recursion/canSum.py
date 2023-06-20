@@ -1,5 +1,6 @@
 # write a funcion canSum(targetSum, numbers) that takes in a targetSum and an array of numbers as args
-# function should return boolean indicating whether or not it is possible to generate the target sum using numbers from the array.
+# function should return boolean indicating whether or not it is possible to generate the target sum using numbers from 
+# the array.
 # you may use an element of the array as many times as needed
 # you may asssume all numbers are non-megative.
 
