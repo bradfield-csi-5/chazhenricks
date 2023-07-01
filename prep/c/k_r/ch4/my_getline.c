@@ -5,7 +5,7 @@ int my_getline(char s[], int lim) {
   while (--lim > 0 && (c = getchar()) != EOF && c != '\n') {
     s[i++] = c;
   }
-  if (c == '\n') {
+  if ((c == '\n')) {
     s[i++] = c;
   }
   s[i] = '\0';

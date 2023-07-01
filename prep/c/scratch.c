@@ -1,8 +1,18 @@
 #include <stdio.h>
 #include <string.h>
 
-int main() {
+struct point {
+  int x;
+  int y;
+};
 
+struct point addpoint(struct point p1, struct point p2) {
+  p1.x += p2.x;
+  p1.y += p2.y;
+  return p1;
+};
+
+int main() {
   char a = 0101;
 
   printf("a = %d\n", a << 1);
@@ -51,13 +61,28 @@ int main() {
   printf("FIRST CHASR: %c\n", *neat);
   printf("SECOND CHASR: %c\n", *(neat + 1));
 
-
-
-
-
-
   char name[10];
   printf("WHAT IS IT THO: %d\n", name[0]);
+
+  struct point {
+    int x;
+    int y;
+  };
+
+  struct rect {
+    struct point pt1;
+    struct point pt2;
+  };
+
+  struct rect screen = {{1, 2}, {3, 4}};
+
+  printf("%d,%d - %d,%d\n", screen.pt1.x, screen.pt1.y, screen.pt2.x,
+         screen.pt2.y);
+
+  struct point first = {1, 2};
+  struct point second = {3, 4};
+
+  struct point result = addpoint(first,second);
 
   return 0;
 }
