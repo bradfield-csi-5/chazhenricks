@@ -75,3 +75,5 @@ go.work
 
 .vscode
 *.md
+.DS_Store
+

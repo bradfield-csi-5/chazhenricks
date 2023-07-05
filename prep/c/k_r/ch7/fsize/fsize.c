@@ -11,7 +11,7 @@
 void fsize(char *);
 
 int main(int argc, char **argv) {
-  // if no arguments passed in, assume we want to run on current directory
+  // if no arguments passed in, assume we want to run kkon current directory
   if (argc == 1)
     fsize("./");
   else
