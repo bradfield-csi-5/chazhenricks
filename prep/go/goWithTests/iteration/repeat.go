@@ -1,17 +1,18 @@
 package iteration
 
-import "fmt"
+import "strings"
 
-func main() {
-	repeated := Repeat("a")
-  fmt.Println(repeated)
-}
 
-func Repeat(character string) string {
+
+func Repeat(character string, times int) string {
   var repeated string 
 
-  for i:=0; i < 5; i++ {
+  for i:=0; i < times; i++ {
     repeated += character
   }
   return repeated
+}
+
+func ContainsAny(base, target string) bool {
+  return strings.ContainsAny(base, target)
 }
