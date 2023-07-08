@@ -31,7 +31,8 @@ func TestArea(t *testing.T) {
 
 		gotRounded := math.Round(got*100) / 100
 		if tt.want != gotRounded {
-			t.Errorf("got: '%f' - want:'%f'", gotRounded, tt.want)
+      //%#v will read a struct and print out all its fields
+			t.Errorf("%#v got: '%g' - want:'%g'",tt.shape, gotRounded, tt.want)
 		}
 	}
 
