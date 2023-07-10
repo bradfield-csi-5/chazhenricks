@@ -1,9 +1,10 @@
 package dictionary
 
 const (
-	NotFoundError   = DictionaryError("value not found in Dictionary")
-	WordExistsError = DictionaryError("word already exists in Dictionary")
-  WordDoesNotExistError = DictionaryError("word does not exist in Dictionary to update")
+	NotFoundError         = DictionaryError("value not found in Dictionary")
+	WordExistsError       = DictionaryError("word already exists in Dictionary")
+	WordDoesNotExistError = DictionaryError("word does not exist in Dictionary to update")
+	DeleteNonExistError   = DictionaryError("word does not exist in Dictionary to delete")
 )
 
 type DictionaryError string
@@ -40,15 +41,29 @@ func (d Dictionary) Add(key, value string) error {
 }
 
 func (d Dictionary) Update(key, value string) error {
-  _, err := d.Search(key)
+	_, err := d.Search(key)
 
-switch err {
-  case NotFoundError:
-    return WordDoesNotExistError
-  case nil:
-    d[key] = value
-  default:
-    return err
+	switch err {
+	case NotFoundError:
+		return WordDoesNotExistError
+	case nil:
+		d[key] = value
+	default:
+		return err
+	}
+	return nil
 }
-  return nil
+
+func (d Dictionary) Delete(key string) error {
+	_, err := d.Search(key)
+
+	switch err {
+	case NotFoundError:
+		return DeleteNonExistError
+	case nil:
+		delete(d, key)
+	default:
+		return err
+	}
+	return nil
 }

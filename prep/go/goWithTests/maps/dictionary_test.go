@@ -56,6 +56,27 @@ func TestSearch(t *testing.T) {
 
 	})
 
+	t.Run("delete existing word", func(t *testing.T) {
+		word := "test"
+		def := "def"
+		dictionary := Dictionary{word: def}
+
+		deleteErr := dictionary.Delete(word)
+		assertNoErrors(t, deleteErr)
+
+    _, gotErr := dictionary.Search(word)
+    assertErrors(t, gotErr, NotFoundError)
+	})
+
+  t.Run("error on delete non-existing word", func(t *testing.T){
+    
+		word := "test"
+    dict := Dictionary{}
+    deleteErr := dict.Delete(word)
+
+    assertErrors(t, deleteErr, DeleteNonExistError)
+  })
+
 }
 func assertNoErrors(t testing.TB, gotErr error) {
 	if gotErr != nil {
