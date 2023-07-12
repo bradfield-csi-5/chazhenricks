@@ -1,7 +1,7 @@
 package main
 
 import (
-	"ch1/ch2/tempconv"
+	"book/ch2/tempconv"
 	"fmt"
 	"os"
 	"strconv"
