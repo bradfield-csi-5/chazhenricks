@@ -49,10 +49,14 @@ func (s *StackOfStrings) IsEmpty() bool {
 
 //now using generics
 
+// stack can be of ANY type, but the type must be specified when the stack is created
 type Stack[T any] struct {
+  //underlying data structure is a slice under the hood
 	values []T
 }
 
+
+// Add method to the Stack struct that adds a new value to the _end_ of the slice
 func (s *Stack[T]) Push(value T) {
 	s.values = append(s.values, value)
 }
@@ -64,10 +68,10 @@ func (s *Stack[T]) Pop() (T, bool) {
 		return zero, false
 	}
 
-	index := len(s.values) - 1
-	el := s.values[index]
-	s.values = s.values[:index]
-	return el, true
+	index := len(s.values) - 1 //need the las index value 
+	el := s.values[index] //grab the value at the last index location 
+	s.values = s.values[:index] //make the stack equal to the stack-minus-last-element
+	return el, true //return last element
 }
 
 func (s *Stack[T]) IsEmpty() bool {
