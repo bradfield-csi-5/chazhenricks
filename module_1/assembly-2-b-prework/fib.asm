@@ -14,11 +14,11 @@ fib:
   mov rbx, rax ;save the return of n - 1 into a temp variable
   pop rdi ; get n back into rdi 
   sub rdi, 2 ;set rdi up to be n - 2
-  push rbx
+  push rbx ; save return value of n - 1 to use when we make our way back the stack
   call fib
   ;n - 2 will return here
-  mov rbp, rax
-  pop rbx
-  mov rax, rbx
-  add rax, rbp
+  mov rbp, rax ;store the return of n - 2 into a temp variable
+  pop rbx ;get back return of n - 1
+  mov rax, rbx ;move return of n - 1 into return register
+  add rax, rbp ;add return of n - 2
   ret 
