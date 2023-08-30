@@ -36,7 +36,7 @@ type User struct {
 
 func AverageAge(users UserMap) float64 {
 	average, count := 0.0, 0.0
-	for _, u := range users {
+	for _, u := range users{
 		count += 1
 		average += (u.age - average) / count
 	}
