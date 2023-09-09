@@ -13,9 +13,11 @@ extern char **environ;
 void eval(char *cmdline);
 int parseline(char *buf, char **argv);
 int builtin_command(char **argv);
-pid_t Fork(void);
 char *Fgets(char *ptr, int n, FILE *stream);
+pid_t Fork(void);
 void unix_error(char *msg);
+void Fuck();
+void Exit();
 
 int main(int argc, char *argv[]) {
   char cmdline[MAXLINE];
@@ -24,12 +26,11 @@ int main(int argc, char *argv[]) {
     printf("🐚 ");
     Fgets(cmdline, MAXLINE, stdin);
     if (feof(stdin)) {
-      exit(0);
+      Exit();
     }
 
     eval(cmdline);
   }
-  printf("Hello, world!\n");
   return 0;
 }
 
@@ -63,15 +64,12 @@ void eval(char *cmdline) {
 
   if (!builtin_command(argv)) {
     if ((pid = Fork()) == 0) {
-      char *cmd = "ls";
-      char *prefix = "/bin/";
-      char *path = malloc(strlen(prefix) + strlen(cmd) + 1);
-
-      strcpy(path, prefix);
-      strcat(path, cmd);
-      if (execve(path, argv, env) < 0) {
+      if (execvp(argv[0], argv) < 0) {
+        // TODO
+        // need to close the forked process if it fails before returning
+        Fuck();
         printf("%s: command not found.\n", argv[0]);
-        exit(0);
+        return;
       }
     }
   }
@@ -80,8 +78,6 @@ void eval(char *cmdline) {
     int status;
     if (waitpid(pid, &status, 0) < 0) {
       unix_error("waitfg: waitpid error");
-    } else {
-      printf("%d %s\n", pid, cmdline);
     }
   }
   return;
@@ -94,8 +90,14 @@ void eval(char *cmdline) {
 //  returning 0 means not a builtin
 //  returning 1 means it is a builtin
 int builtin_command(char **argv) {
+  if (!strcmp(argv[0], "farts")) {
+    Exit();
+  }
+  if (!strcmp(argv[0], "exit")) {
+    Exit();
+  }
   if (!strcmp(argv[0], "quit")) {
-    exit(0);
+    Exit();
   }
 
   if (!strcmp(argv[0], "&")) {
@@ -194,4 +196,19 @@ char *Fgets(char *ptr, int n, FILE *stream) {
     unix_error("Fgets error");
 
   return rptr;
+}
+
+void Fuck() {
+  printf("\n");
+  printf("███████╗██╗   ██╗ ██████╗██╗  ██╗\n");
+  printf("██╔════╝██║   ██║██╔════╝██║ ██╔╝\n");
+  printf("█████╗  ██║   ██║██║     █████╔╝ \n");
+  printf("██╔══╝  ██║   ██║██║     ██╔═██╗ \n");
+  printf("██║     ╚██████╔╝╚██████╗██║  ██╗\n");
+}
+
+void Exit() {
+  printf("\n");
+  printf("💩Smell ya later💩\n");
+  exit(0);
 }
