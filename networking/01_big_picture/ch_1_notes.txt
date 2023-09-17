@@ -1,0 +1,144 @@
+# Chapter 1 Computer Networks And The Internet 
+
+## Overview
+
+### 1.1 What Is The Internet? 
+
+#### Questions To Answer:
+- What is difference between host and end system? List several of each. 
+hosts and end systems are the same thing. "things connected to a network"
+
+- The word Protocol is often used to descripbe diplomatic relations. How does wikipedia describe protocols? 
+  - agreed set of communication standards. Set of rules/manners. 
+
+- Why are standards imoportant for protocols?
+  - too many moving parts. If we have standards, as long as we implements the interfaces, we can plug in and play into a multitude of systems 
+
+
+
+- Nuts-and-bolts description
+  - computer networks that connects billions of devices (computers/games/stoplights etc...)
+  - hosts = end systems (computers and devices)
+  - communication links (physical medium) 
+  - packet switches: forward packets (chunks of data)(warehouses organizing packets to end destinations)
+  - routers and switches == two most common types of packet switches 
+  - Transmission Control Protocol & IP == two most important protocols
+
+- Services Description 
+  - infrastructure that provides services to applications
+  - applications run on end systems, not on the infratructure. 
+  - applicatoins use the infrastructure to allow applications to communicate 
+  - socket interface == how internet expects end systems to use the infrastructure (alice, the letter, 'postal service interface')
+
+- What is a protocol? 
+  - 'collective set of rules / manners' 
+  - if we all play by the same rules, then we'll know what to expect from each other
+  - 'send and receive messages in known/understandable formats' 
+
+### 1.2 The Network Edge 
+- Access Networks 
+- Physical Media 
+
+### 1.3 The Network Core 
+- Packet Switching 
+- Circuit Switching 
+- A Network Of Networks 
+
+### 1.4 Delay, Loss, and Throughput in Packet-Switched Networks 
+- Overview of Delay 
+  - Types Of Delay
+  - Processing Delay 
+  - Queuing Delay 
+  - Transmission Delay 
+  - Propagation Delay 
+  - Comparing Transmission and Propagation Delay 
+- Queuing Delay And Packet Loss 
+  - Packet Loss 
+- Ent-To-End Delay 
+  - Traceroute 
+  - End system, Application and Other Delays 
+- Throughput in Computer Networks 
+
+### 1.5 Protocol Layers and Their Service Models 
+
+##### Questions To Answer 
+- List Five tasks a layer can perform. Is it possible for one or more of these tasks to be performed by multiple layers?
+
+- What are the five layers? What are their principal responsibilities?
+
+- What is an application-layer message? A transport layer segment? 
+  - a "packet" 
+  - at each layer, the "thing" they are dealing with gets a different name 
+
+- Which layers in the internet protocol stack does a router process? 
+    - link-layer 
+- Which layers does a link-layer switch process? (network and physical, link))
+- Which layers does a host process (all five) 
+
+
+- Layered Architecture
+  > Airport analogy (ticket, baggage check, board, takeoff, land, deplane, baggage claim) 
+  >Each layer has its own service it provies, either at the airport, or in the air  
+  - Application Layer 
+    - HTTP(web document requests), SMTP (emails), FTP(file transfers) 
+    - translation of web url to 32 bit network address (DNS) 
+    - packet in application layer === message 
+
+  - Transport Layer 
+    - transports application messages between endpoints 
+    - TCP/UDP == two protocols 
+    - TCP == connection-oriented. 
+      - guarenteed transmission (will retry if not confirm)
+      - breaks long messages into shorter segments 
+      - congestion control mechanism (will throttle if network clogged) 
+    - UDP === connectionless 
+      - no confirmation/throttling/flow control 
+    - packet in transport layer === segment 
+
+  - Network Layer 
+    - packets in network layer === datagrams
+    - moves datagrams from one network host to another 
+    - transport layer gives segment and destination (like postal service with letter/addess)
+    - IP protocol - defines fields inthe datagram 
+
+  - Link Layer 
+    - moves packets from one router to another between networks 
+    - link -> router which passes up to network then back down to link to -> next router
+    - Ethernet, WIFI protocols 
+    - packets in link layer === frames 
+
+  - Physical Layer 
+    - moves bits from frames across 
+    - idk this section is like one sentence 
+
+  - The OSI Model 
+    - Model that didnt get accepted as a standard
+    - contains two additional layers: 
+    - presentation 
+      -provide services to allow applications to interpret the meaning of data exchanged
+    - session 
+      - sync of data exchange (???) 
+
+- Encapsulation 
+  - on their path from end host to end host, packets dont have to pass through all layers 
+  - each layer has a header field and a payload field 
+
+
+
+### 1.6 Networks Under Attack
+- The Bad Guys can put malware into your host via the internet 
+- The Bad Guys can attack servers and network infrastructure 
+- The Bad Guys can sniff packets 
+- The Bad Guys can masquerade as someone you trust 
+
+### 1.7 History Of Computer Networking and the Internet
+- Development of Packet Switching (1961-1972)
+  - 1960's - idea of "packet switching" became the way people  were thinking about how to transmit data 
+  - modeled afte how telephone company used switches 
+  
+- Proprietary Networks and Internetworking (1972-1980)
+- Proliferation Of Networks (1980-1990)
+- Internet Explosion (1990s) 
+- New Millennium 
+- 
+

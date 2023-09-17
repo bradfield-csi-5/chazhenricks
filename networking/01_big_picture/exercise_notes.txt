@@ -1,0 +1,101 @@
+# PCapture The Flag
+
+## Overview
+We have recorded a packet capture of an HTTP request and response for an image, performed over an imperfect network.
+The challenge for you is to parse the capture file, find and parse the packets constituting the image download, and reconstruct the image!
+It’s like a murder mystery, except with a trail of binary data and a hero rather than a villain at the end of it.
+
+
+### Layers Of The Protocol 
+
+- data is wrapped at each layer in a header/payload 
+- Ehternet connection - request and download an image from the web
+- http message, wrapped in a tcp segment, followed by an ip datagram, finally ethernet frame 
+  - segment == packet at transport layer
+  - datagram == packet at network layer   
+  - frame == packet at link layers (with ethernet we add some data to the end as well)  
+
+- image big enough that it needed to be split into multiple tcp segments/ip datagrams/ethernet frames
+  
+For This Exercise:
+- parse ethernet frames    
+- then the ip datagrams within them   
+- then the tcp segments 
+
+when all the segments are stitched together, we can get the original http messages.
+
+### the pcap file format
+- used `tcpdump` to capture network traffic
+  - `man tcpdump` 
+'pcap-savefile' - need to understand format
+  - `man pcap-savefile` 
+  - has a global header followed by a seq of network packets
+    
+
+#### Global pcap-savefile Header 
+- use `xxd` to parse the header   
+- will be working with binary     
+
+Questions To Answer:
+1. whats the magic number? what does it tell you about byte ordering? 
+2. what are the major and minor versions? (dont forget byte ordering!)
+3. aer the values that aught to be zero in fact zero? 
+4. what is the snapshot length?   
+5. whta is the link layer headere type?
+
+link layer header type will confirm ethernet type and will tell us where to look 
+for more packets. 
+
+
+#### Per Packet Headers
+- bytes following global header will be furst per-packet header data.
+
+1. what is the size of the first packet? 
+2. was any data truncated?
+
+
+##### Actual Code   
+Write a program to count number of packets captured in the file.
+Will need: 
+1. read the captured and total length of each packet. 
+2. verify that the captured and total length are the same
+3. use this length to determne where the next packets headers begin
+4. repeat process on the next packet, until you have reached the end of the file. 
+
+#### Parsing Ethernet headers  
+- need to fine the exact specification for this header (dont spend more than 10 min) 
+- once know format, extend program to:
+1. determine the version of the wrapped IP datagram (ipv6 or ipv4) so we can parse data
+2. verify that all the IP datagrams have same format 
+3. print the source and dest MAC addresses 
+
+
+#### Parsing Ip Headers
+- find ip specification 
+- add to program: 
+1. determine length of IP header for each datagram. 
+2. determine the source anf destination IP addresses
+3. determine length of datagram payload 
+4. determine the transport protocol being used and that all datagrams use same one
+
+#### Parsing Tcp Headers 
+- find spec 
+- extend program: 
+1. determine ports used to communicate
+2. determine length of transport header
+3. determine sequence numbers for this packet. 
+4. extract the http data from this packet and store it somewhere. 
+
+
+#### parsing http data 
+1. order received data by tcp sequence number
+2. compine to single binary string
+3. extract http header, decode it as plain text, print and verify that they all make sense
+4. extract the http body write it to disk as a file with .jpg extension and open it!
+
+
+
+
+
+## pcap-savefile
+
