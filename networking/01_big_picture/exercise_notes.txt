@@ -99,3 +99,11 @@ Will need:
 
 ## pcap-savefile
 
+
+## TAKEAWAYS
+- Big Endian vs Little Endian numbers big tripped me up. 
+- Was like 95% there and got tripped up in filtering logic 
+- 
+
+
+

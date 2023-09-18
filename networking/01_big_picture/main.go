@@ -5,8 +5,14 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"sort"
 	"unsafe"
+)
+
+const (
+	GlobalHeaderLength = 24
+	PerPacketHeaderLength   = 16
 )
 
 type GlobalHeader struct {
@@ -17,6 +23,18 @@ type GlobalHeader struct {
 	Accuracy            uint32
 	SnapshotLength      uint32
 	LinkLayerHeaderType uint32
+}
+
+type PerPacketHeader struct {
+	TimeStampSeconds  uint32
+	NanoMicro         uint32
+	PacketLength      uint32
+	UnTruncatedLength uint32
+}
+
+type EthernetFrames struct {
+	source uint64
+	data   []byte
 }
 
 type DecodedPacket struct {
@@ -47,7 +65,7 @@ func main() {
 	ipDatagrams := ParseIpDatagram(ethernetFrames)
 	tcpSegments := ParseTCPSegment(ipDatagrams)
 
-	fmt.Printf("TCP PACKETS: %d \n", len(tcpSegments.packets))
+	// fmt.Printf("TCP PACKETS: %d \n", len(tcpSegments.packets))
 
 	CreateImage(tcpSegments)
 }
@@ -102,10 +120,13 @@ func CountPackets(data []byte) [][]byte {
 func ParseEthernetFrame(packets [][]byte) [][]byte {
 
 	frames := make([][]byte, 0)
+
 	for _, packet := range packets {
+
 		var destMacAddress uint64 = Parse6ByteNumber(packet[:6])
 		var sourceMacAddress uint64 = Parse6ByteNumber(packet[6:12])
 		ipType := DecodeIPType(packet[12:14])
+		fmt.Println("---Ethernet Frame---")
 		fmt.Printf("DEST MAC: %x - SOURCE MAC %x - IP VERSION: %s\n", destMacAddress, sourceMacAddress, ipType)
 
 		// endIndex := len(packet) - 4
@@ -137,48 +158,59 @@ func ParseIpDatagram(frames [][]byte) [][]byte {
 func ParseTCPSegment(datagrams [][]byte) DecodedImage {
 	image := DecodedImage{}
 	for _, datagram := range datagrams {
-		sourcePort := binary.LittleEndian.Uint16(datagram[:2])
+		sourcePort := binary.BigEndian.Uint16(datagram[:2])
 		destPort := binary.LittleEndian.Uint16(datagram[2:4])
+		fmt.Println("------ TCP Segment -----")
 		fmt.Printf("SOURCE PORT: %d DEST:%d \n", sourcePort, destPort)
 		headerLength := (datagram[12] >> 4) * 4
 
-		sequenceNumber := binary.LittleEndian.Uint32(datagram[4:8])
-		httpData := datagram[headerLength:]
+    if sourcePort == 80 {
 
+		sequenceNumber := binary.BigEndian.Uint32(datagram[4:8])
+		httpData := datagram[headerLength:]
 		imagePacket := DecodedPacket{order: int(sequenceNumber), data: httpData}
 		image.packets = append(image.packets, imagePacket)
-		fmt.Printf("SEQUENCE: %d  DataLength: %d\n", sequenceNumber, len(httpData))
+    }
+
 	}
+
 	return image
 
 }
 
 func CreateImage(imageData DecodedImage) {
 	sort.Sort(imageData)
-	// segmentMap := make(map[int]int)
-  image := make([]byte, 0)
+	for _, segment := range imageData.packets {
+		fmt.Printf("Segment Number: %d - Length:%d\n", segment.order, len(segment.data))
+	}
+	image, err := os.Create("butts.jpg")
+	if err != nil {
+		fmt.Println("Error writing picture: ", err)
+		return
+	}
+	defer image.Close()
+
+	combinedData := make([][]byte, len(imageData.packets))
+
 	for _, packet := range imageData.packets {
-		// if _, exists := segmentMap[packet.order]; exists {
-		// 	continue
-		// } else {
-			// segmentMap[packet.order] = 1
-			fmt.Printf("PACKET NUMBER: %d\n", packet.order)
-      bodyData := ExtractHttpData(packet.data)
-      image = append(image, bodyData...)
-		// }
+		combinedData = append(combinedData, packet.data)
+	}
 
-    err := ioutil.WriteFile("coolImage.jpg", image, 0644)
-    if err != nil {
-      fmt.Println("Error writing picture: ", err)
-      return
-    }
+  response := bytes.Join(combinedData, []byte{})
 
+	bodyData := ExtractHttpData(response)
+	_, err = image.Write(bodyData)
+	if err != nil {
+		fmt.Println("Error writing body data:", err)
+		image.Sync()
 	}
 }
 
 func ExtractHttpData(data []byte) []byte {
 	breakIndex := bytes.Index(data, []byte("\r\n\r\n"))
+	fmt.Println("HI IM THE BREAK INDEX:", breakIndex)
 	if breakIndex == -1 {
+		fmt.Println("Oh I had to do the other one")
 		breakIndex = bytes.Index(data, []byte("\n\n"))
 	}
 
@@ -186,9 +218,9 @@ func ExtractHttpData(data []byte) []byte {
 		headers := data[:breakIndex]
 		body := data[breakIndex+4:]
 		fmt.Printf("HTTP HEADERS %s\n", string(headers))
-		fmt.Printf("BODY %s\n", string(body))
 		return body
 	}
+	fmt.Println("I looked at a packet and didnt find a body : /(")
 	return make([]byte, 0)
 }
 
