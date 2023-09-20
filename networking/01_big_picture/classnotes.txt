@@ -1,0 +1,5 @@
+# What happens when we go to wikipedia.com? 
+
+ARP == address resolution protocol (who has the MAC address for this ip address?)
+
+

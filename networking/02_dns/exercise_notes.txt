@@ -1,0 +1,13 @@
+# To Look Up Man Pages 
+
+## socket  
+arguments: 
+ - int domain == communication domain. Will almost definitely be 3 (IpV4) 
+ - int type == SOCK_DGRAM will be UDP | SOCK_STREAM will be TCP 
+ - int protocol == 17 (UDP)
+
+## bind
+
+## sendto
+
+## recvfrom 
