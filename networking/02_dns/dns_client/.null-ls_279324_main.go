@@ -90,7 +90,7 @@ func checkErr(e error) {
 
 func BuildHeader(buf *bytes.Buffer) {
 	header := DnsHeader{
-		0x0666,
+		66,
 		0x0120,
 		1,
 		0,
@@ -107,20 +107,32 @@ func BuildHeader(buf *bytes.Buffer) {
 }
 
 func BuildQuestion(buf *bytes.Buffer, name string) {
-
-	split := strings.Split(name, ".")
-	for _, value := range split {
-		binary.Write(buf, big, uint8(len(value)))
-		binary.Write(buf, big, []byte(value))
+	question := Question{
+		BuildQName(name),
+		A,
+		IN,
 	}
-	binary.Write(buf, big, uint8(0))
 
-	binary.Write(buf, big, A)
-	binary.Write(buf, big, IN)
+	binary.Write(buf, big, question.QName)
+	binary.Write(buf, big, question.QType)
+	binary.Write(buf, big, question.QClass)
 }
 
-func BuildQName(buf *bytes.Buffer, name string) {
+func BuildQName(name string) []byte {
 
+	var buf bytes.Buffer
+	split := strings.Split(name, ".")
+	for _, value := range split {
+
+		length := byte(len(value))
+		lengthSlice := []byte{length}
+		_, err := buf.Write(lengthSlice)
+		checkErr(err)
+		_, err = buf.Write([]byte(value))
+		checkErr(err)
+	}
+
+	return buf.Bytes()
 }
 
 func main() {
