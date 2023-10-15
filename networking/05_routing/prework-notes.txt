@@ -1,0 +1,24 @@
+# Prework Notes 
+
+
+## traceroute 
+- prints the route packets take from request to end host# Prework Notes 
+
+
+## traceroute 
+- prints the route packets take from request to end host# Prework Notes 
+
+
+## traceroute 
+- prints the route packets take from request to end host
+- uses IP 'time to live' field and tries to get an ICMP TIME_EXCEEDED response from each gateway. 
+- send a defaulty 40 bytes to the destination host and will attempt to monitor the response at each stop along the way. 
+
+
+### How It works 
+- tries to trace the route an IP packet would take by sending a UDP probe with a short TTL to each server in the route. 
+- TTL works by each hop the packet makes decrementing the ttl by 1. 
+- if the TTL gets to 0, the server will return an ICMP TIME_EXCEEDDED error. 
+- SO we start with a TTL of 1, the first server decrements the TTL, throws the error, and we get the first server in the hop. 
+- NEXT we do the same thing with TTL == 2, first server (weve already seen), decrements it to 1, passes it along. The second server, decrements to 0, throws error and now we have server 2
+- we keep sending packets with an increasing TTL until we get the end server we're looking for. 
