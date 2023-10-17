@@ -3,14 +3,19 @@ package com.craftinginterpreters.lox;
 class AstPrinter implements Expr.Visitor<String> {
 
     public static void main(String[] args) {
+        //Expression made of combining unary/binary/grouping/literal
         Expr expression = new Expr.Binary(
                 new Expr.Unary(new Token(TokenType.MINUS, "-", null, 1), new Expr.Literal(123)),
                 new Token(TokenType.STAR, "*", null, 1),
                 new Expr.Grouping(new Expr.Literal(45.67)));
+        //pass expression to the print method
         System.out.println(new AstPrinter().print(expression));
     }
 
     String print(Expr expr) {
+        //calls accept on the expression passed in, which in turn will call the parenthesize method 
+        //of the cooresponding type below.
+        //this example is a binary expression, so we'll call the binary method below
         return expr.accept(this);
     }
 
