@@ -19,8 +19,9 @@ func Evaluate(expr ast.Expr) (int, error) {
 	var result int
 	switch ex := expr.(type) {
 	case *ast.BasicLit:
-		fmt.Println("Basic Lit")
 		result = ReturnLiteralValue(ex)
+	case *ast.BinaryExpr:
+		result = EvalBinaryExpression(ex)
 	default:
 		fmt.Println("no match :(")
 	}
@@ -32,6 +33,24 @@ func Evaluate(expr ast.Expr) (int, error) {
 func ReturnLiteralValue(lit *ast.BasicLit) int {
 	intVal, _ := strconv.Atoi(lit.Value)
 	return intVal
+}
+
+func EvalBinaryExpression(bin *ast.BinaryExpr) int {
+	left, _ := Evaluate(bin.X)
+	right, _ := Evaluate(bin.Y)
+
+	var eval int
+
+	switch bin.Op {
+	case token.ADD:
+		eval = left + right
+	case token.SUB:
+		eval = left - right
+	case token.MUL:
+		eval = left * right
+	}
+
+	return eval
 }
 
 func main() {
