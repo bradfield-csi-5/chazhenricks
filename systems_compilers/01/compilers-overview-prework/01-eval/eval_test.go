@@ -12,8 +12,9 @@ func TestEvaluate(t *testing.T) {
 	}{
 		{"5", 5},
 		{"2 * 3", 6},
-		// {"1 + 2 - 3 * 4", -9},
-		// {"2 * (3 - 4 * (5 + 6) + 7)", -68},
+		{"1 + 2 - 3 * 4", -9},
+
+		{"2 * (3 - 4 * (5 + 6) + 7)", -68},
 	} {
 		//pass the string into the go parser
 		//are returned an expr

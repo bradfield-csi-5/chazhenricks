@@ -22,11 +22,12 @@ func Evaluate(expr ast.Expr) (int, error) {
 		result = ReturnLiteralValue(ex)
 	case *ast.BinaryExpr:
 		result = EvalBinaryExpression(ex)
+	case *ast.ParenExpr:
+		result = EvalParenExpression(ex)
 	default:
 		fmt.Println("no match :(")
 	}
 
-	//if we just a single literal
 	return result, nil
 }
 
@@ -51,6 +52,11 @@ func EvalBinaryExpression(bin *ast.BinaryExpr) int {
 	}
 
 	return eval
+}
+
+func EvalParenExpression(paren *ast.ParenExpr) int {
+	val, _ := Evaluate(paren.X)
+	return val
 }
 
 func main() {
