@@ -12,10 +12,6 @@ import (
 // Given an expression containing only int types, evaluate
 // the expression and return the result.
 func Evaluate(expr ast.Expr) (int, error) {
-	//read the expression
-	//execute in order
-	//return result
-	// TODO
 	var result int
 	switch ex := expr.(type) {
 	case *ast.BasicLit:
