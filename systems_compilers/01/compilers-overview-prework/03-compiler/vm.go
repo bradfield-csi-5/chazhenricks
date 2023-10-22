@@ -35,7 +35,6 @@ const (
 // 00 01 02 03 04 05 06 07 08 09 0a 0b 0c ... df e0 e1 ... ff
 // __ __ __ __ __ __ __ __ __ __ __ __ __ ... __ __ __ ... __
 // ^==DATA===============^ ^==INSTRUCTIONS=====^ ^==STACK===^
-//
 func execute(memory []byte) error {
 	var (
 		pc byte = 0x08 // program counter
@@ -103,6 +102,7 @@ func execute(memory []byte) error {
 		op := memory[pc]
 
 		if op == Halt {
+			fmt.Printf("STACK: %v\n", memory)
 			return nil
 		}
 
