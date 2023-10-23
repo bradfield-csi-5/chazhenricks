@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -15,19 +16,19 @@ type testCase struct {
 }
 
 var testCases = []testCase{
-	{
-		name: "Constant",
-		src: `package f
-
-func f(x, y byte) byte {
-	return 5
-}`,
-		examples: []funcExample{
-			{1, 1, 5},
-			{2, 1, 5},
-			{7, 19, 5},
-		},
-	},
+	// {
+	// 	name: "Constant",
+	// 	src: `package f
+	//
+	// func f(x, y byte) byte {
+	// 	return 5
+	// }`,
+	// 	examples: []funcExample{
+	// 		{1, 1, 5},
+	// 		{2, 1, 5},
+	// 		{7, 19, 5},
+	// 	},
+	// },
 	// {
 	// 	name: "Parameters",
 	// 	src: `package f
@@ -42,19 +43,19 @@ func f(x, y byte) byte {
 	// 		{5, 8, 13},
 	// 	},
 	// },
-	//	{
-	//		name: "More Complicated Expression",
-	//		src: `package f
-	//
-	//	func f(x, y byte) byte {
-	//		return 2 * (x + 3) * (y + 4)
-	//	}`,
-	//
-	//		examples: []funcExample{
-	//			{1, 1, 40},
-	//			{2, 2, 60},
-	//		},
-	//	},
+	{
+		name: "More Complicated Expression",
+		src: `package f
+
+	func f(x, y byte) byte {
+		return 2 * (x + 3) * (y + 4)
+	}`,
+
+		examples: []funcExample{
+			{1, 1, 40},
+			{2, 2, 60},
+		},
+	},
 	//	{
 	//		name: "Multiple Statements",
 	//		src: `package f
@@ -189,10 +190,12 @@ func TestPipeline(t *testing.T) {
 // Given some Go code and test cases, run bytecode generation,
 // then execute the resulting bytecode in the virtual machine
 func testPipeline(t *testing.T, test testCase) {
+	fmt.Printf("SRC: %v\n", test.src)
 	bytecode, err := generateBytecode(test.src)
 	if err != nil {
 		t.Fatal(err)
 	}
+	fmt.Printf("Bytecode%v\n", bytecode)
 
 	// For each case, set inputs and run VM
 	for _, e := range test.examples {

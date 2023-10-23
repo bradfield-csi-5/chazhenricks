@@ -102,7 +102,7 @@ func execute(memory []byte) error {
 		op := memory[pc]
 
 		if op == Halt {
-			fmt.Printf("STACK: %v\n", memory)
+			// fmt.Printf("STACK: %v\n", memory)
 			return nil
 		}
 

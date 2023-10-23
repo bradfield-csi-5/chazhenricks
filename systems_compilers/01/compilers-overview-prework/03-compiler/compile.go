@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"go/ast"
+	"go/token"
 	"strings"
 )
 
@@ -17,6 +18,8 @@ var builder strings.Builder
 // should be written to memory address `0`.
 func compile(node *ast.FuncDecl) (string, error) {
 
+	// fmt.Printf("NODE: %v\n", node)
+	//handle arguments
 	bodyStatements := node.Body.List
 	for _, stmt := range bodyStatements {
 		EvaluateStatement(stmt)
@@ -26,6 +29,7 @@ func compile(node *ast.FuncDecl) (string, error) {
 	builder.WriteString("pop 0\n")
 	builder.WriteString("halt\n")
 	result := builder.String()
+	// fmt.Printf("IM THE ASSEMBLY:%s\n", result)
 
 	return result, nil
 }
@@ -33,35 +37,84 @@ func compile(node *ast.FuncDecl) (string, error) {
 func EvaluateStatement(stmt ast.Stmt) {
 	switch stmtType := stmt.(type) {
 	case *ast.ReturnStmt:
-		getValueFromReturnStmt(stmtType)
+		EvaluateReturnStatement(stmtType)
 	}
 }
 
 func EvaluateExpression(expr ast.Expr) {
 	switch ex := expr.(type) {
 	case *ast.BasicLit:
-		EvalLiteralValue(ex)
+		EvalLiteralExpr(ex)
+	case *ast.BinaryExpr:
+		EvalBinaryExpr(ex)
+	case *ast.Ident: //when we just get x or y
+		EvalIdent(ex)
+	case *ast.ParenExpr:
+		EvalParensExpr(ex)
+
+	default:
+		fmt.Printf("WHAT AM I %T\n", ex)
 	}
+
 }
 
-func getValueFromReturnStmt(ret *ast.ReturnStmt) {
+func EvalParensExpr(paren *ast.ParenExpr) {
+	EvaluateExpression(paren.X)
+}
+
+func EvaluateReturnStatement(ret *ast.ReturnStmt) {
 
 	switch retExpr := ret.Results[0].(type) {
 	case *ast.BasicLit:
-		EvalLiteralValue(retExpr)
+		EvalLiteralExpr(retExpr)
 	case *ast.BinaryExpr:
-		fmt.Println("IM A BINARY")
-		// EvaluateBinaryExpression(retExpr)
+		EvalBinaryExpr(retExpr)
 	}
 
 }
 
-func EvalLiteralValue(expr *ast.BasicLit) {
+func EvalLiteralExpr(expr *ast.BasicLit) {
 	PushValueToStack(expr.Value)
 }
 
+func GetLiteralValue(expr *ast.BasicLit) string {
+	return expr.Value
+}
+
+func EvalBinaryExpr(expr *ast.BinaryExpr) {
+	EvaluateExpression(expr.X)
+	EvaluateExpression(expr.Y)
+	EvalOperand(expr.Op)
+}
+
+func EvalOperand(op token.Token) {
+	switch op {
+	case token.ADD:
+		builder.WriteString("add\n")
+	case token.SUB:
+		builder.WriteString("sub\n")
+	case token.MUL:
+		builder.WriteString("mul\n")
+	case token.QUO:
+		builder.WriteString("div\n")
+	}
+}
+
+func EvalIdent(expr *ast.Ident) {
+	fmt.Printf("NAME: %s\n", expr.Name)
+	switch expr.Name {
+	case "x":
+		//pop from memory address 1 and add to stack
+		builder.WriteString("push 1\n")
+	case "y":
+		//pop from memory address 2 and add to stack
+		builder.WriteString("push 2\n")
+	default:
+		fmt.Println("You have fucked up with the variables")
+	}
+}
+
 func PushValueToStack(value string) {
-	fmt.Println("I GOT PUSHED TO")
 	builder.WriteString("pushi ")
 	builder.WriteString(value)
 	builder.WriteString("\n")
