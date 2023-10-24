@@ -1,0 +1,12 @@
+# Misc Shit -- HTTP2 / HTTP3 / QUIC / TLS 
+
+- hey theres an http2!
+- http1 best practices arent the shit in http2 [VIDEO](https://www.youtube.com/watch?v=yURLTwZ3ehk)
+- piplining == all responses need to be recieved before more requests can be made 
+
+
+hpack == header compression - pointer to mention previously used headers. Also, a lot of the common headers are 
+just a part of the protocol. 
+
+
+chrome://net-export 

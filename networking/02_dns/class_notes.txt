@@ -1,0 +1,17 @@
+# Notes 
+
+- `8.8.8.8` == "recursive resolver" === cacheing server. 
+- Lots of them around | typically your ISP
+- Incentivized to replicate/cache DNS records in these recursive
+
+Recursive resolver ==> calls ==> Root server 
+- we ask Root server for the NameSpace server for the TLD only (.com/.edu/.ly etc...)
+- root servers respinsible for knowing about the TLD Name Servers
+- root will return with Name Server for the TLD 
+
+Recursive resolver ==> calls ==> TLD Server 
+- we ask the TLD for the actual ip address 
+- will get back some Name Servers for any subdomains managed by wikipedia 
+
+Recursive Resolver ==> calls => Name Server 
+- we then ask the Name Server for wikipedia.org and get back the ip address 

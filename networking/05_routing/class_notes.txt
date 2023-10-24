@@ -1,0 +1,4 @@
+# Flow Control 
+
+- window size === how much data I am capabile of reading at one time - that size ebs and flows and every TCP segment has a window size attached to it
+- max port === 65535 === largest number to represent in 16 bits
