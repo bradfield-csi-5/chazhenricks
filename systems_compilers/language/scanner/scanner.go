@@ -89,7 +89,7 @@ func (scan *Scanner) scanToken() {
 	case '/':
 		if scan.match('/') {
 			//we hit a comment
-			for scan.peek() != "\n" && !scan.isAtEnd() {
+			for scan.peek() != '\n' && !scan.isAtEnd() {
 				scan.advance()
 			}
 		} else {
@@ -106,7 +106,8 @@ func (scan *Scanner) scanToken() {
 	case '\n':
 		scan.Line += 1
 		return
-  case '"': 
+	case '"':
+		scan.string()
 	default:
 		fmt.Printf("WHAT IS IT: %s\n", c)
 		error.CoolError(scan.Line, "Unexpected Character")
@@ -115,6 +116,33 @@ func (scan *Scanner) scanToken() {
 
 func HelloScanner() {
 	fmt.Println("hello from scanner")
+}
+
+// we hit an open string character
+func (scan *Scanner) string() {
+	//while we dont hit the closing " or the end of the file
+	for scan.peek() != '"' && !scan.isAtEnd() {
+		//if we hit a new line, increment the counter
+		//this will have the effect of letting us have multi-line strings
+		if scan.peek() == '\n' {
+			scan.Line += 1
+		}
+		//while were still in the loop, keep advancing
+		scan.advance()
+	}
+
+  if scan.isAtEnd(){
+    error.CoolError(scan.Line, "unterminated string")
+  }
+
+  scan.advance()
+  //get that last " outta here
+
+	//once we exit the loop get the string value
+	//+1 and -1 to account for the "" chars
+	strValue := scan.Source[scan.Start+1 : scan.Current-1]
+  scan.addString(strValue)
+
 }
 
 func (scan *Scanner) advance() byte {
@@ -134,15 +162,19 @@ func (scan *Scanner) match(expected byte) bool {
 	return true
 }
 
-func (scan *Scanner) peek() string {
+func (scan *Scanner) peek() byte {
 	if scan.isAtEnd() {
-		return ""
+		return ' '
 	}
-	return string(scan.Source[scan.Current])
+	return scan.Source[scan.Current]
 }
 
 func (scan *Scanner) addToken(tok token.TokenEnum) {
 	scan.Tokens = append(scan.Tokens, token.Token{Type: tok, Lexeme: tok.String()})
+}
+
+func (scan *Scanner) addString(val string) {
+	scan.Tokens = append(scan.Tokens, token.Token{Type: token.STRING, Lexeme: val})
 }
 
 func (scan *Scanner) isAtEnd() bool {
