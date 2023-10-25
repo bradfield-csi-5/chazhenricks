@@ -24,7 +24,7 @@ func NewScanner(source string) Scanner {
 	}
 }
 
-func (scan *Scanner) scanTokens() []token.Token {
+func (scan *Scanner) ScanTokens() []token.Token {
 	for !scan.isAtEnd() {
 		scan.Start = scan.Current
 		scan.scanToken()
@@ -39,34 +39,42 @@ func (scan *Scanner) scanToken() {
 	switch c {
 	case "(":
 		scan.addToken(token.LEFT_PAREN)
-    break
+		break
 	case ")":
 		scan.addToken(token.RIGHT_PAREN)
-    break
+		break
 	case "{":
 		scan.addToken(token.LEFT_BRACE)
-    break
+		break
 	case "}":
 		scan.addToken(token.RIGHT_BRACE)
-    break
+		break
 	case ",":
 		scan.addToken(token.COMMA)
-    break
+		break
 	case ".":
 		scan.addToken(token.DOT)
-    break
+		break
 	case "-":
 		scan.addToken(token.MINUS)
-    break
+		break
 	case "+":
 		scan.addToken(token.PLUS)
-    break
+		break
 	case ";":
 		scan.addToken(token.SEMICOLON)
-    break
+		break
 	case "*":
 		scan.addToken(token.STAR)
-    break
+		break
+
+	//could be 1 or 2 chars
+	case "!":
+		if scan.match("=") {
+			scan.addToken(token.BANG_EQUAL)
+		} else {
+			scan.addToken(token.BANG)
+		}
 	default:
 		error.CoolError(scan.Line, "Unexpected Character")
 		break
@@ -78,8 +86,27 @@ func HelloScanner() {
 }
 
 func (scan *Scanner) advance() string {
+	char := string(scan.Source[scan.Current])
 	scan.Current += 1
-	return string(scan.Source[scan.Current])
+	return char
+}
+
+func (scan *Scanner) match(expected string) bool {
+	if scan.isAtEnd() {
+		return false
+	}
+	if string(scan.Source[scan.Current]) != expected {
+		return false
+	}
+	scan.Current += 1
+	return true
+}
+
+func (scan *Scanner) peek() byte {
+	if scan.isAtEnd() {
+		return 0
+	}
+	return scan.Source[scan.Current]
 }
 
 func (scan *Scanner) addToken(tok token.TokenEnum) {

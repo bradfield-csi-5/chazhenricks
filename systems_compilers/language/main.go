@@ -3,8 +3,10 @@ package main
 import (
 	"bufio"
 	"fmt"
+
 	// "language/scanner"
 	"language/error"
+	"language/scanner"
 	"os"
 )
 
@@ -49,9 +51,10 @@ func runPrompt() {
 }
 
 func run(source string) {
-	// tokens := scanner.ScanTokens(source)
-	// for _, token := range tokens {
-	// fmt.Printf("TOKEN: %v\n", token)
-	// }
+  scanner := scanner.NewScanner(source)
+	tokens := scanner.ScanTokens()
+	for _, token := range tokens {
+	fmt.Printf("TOKEN: %v\n", token)
+	}
 	fmt.Printf("I RAN IT: %s\n", source)
 }
