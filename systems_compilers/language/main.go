@@ -51,10 +51,9 @@ func runPrompt() {
 }
 
 func run(source string) {
-  scanner := scanner.NewScanner(source)
+	scanner := scanner.NewScanner(source)
 	tokens := scanner.ScanTokens()
 	for _, token := range tokens {
-	fmt.Printf("TOKEN: %v\n", token)
+		fmt.Printf("TOKEN: %v\n", token)
 	}
-	fmt.Printf("I RAN IT: %s\n", source)
 }

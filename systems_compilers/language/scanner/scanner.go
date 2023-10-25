@@ -39,34 +39,24 @@ func (scan *Scanner) scanToken() {
 	switch c {
 	case "(":
 		scan.addToken(token.LEFT_PAREN)
-		break
 	case ")":
 		scan.addToken(token.RIGHT_PAREN)
-		break
 	case "{":
 		scan.addToken(token.LEFT_BRACE)
-		break
 	case "}":
 		scan.addToken(token.RIGHT_BRACE)
-		break
 	case ",":
 		scan.addToken(token.COMMA)
-		break
 	case ".":
 		scan.addToken(token.DOT)
-		break
 	case "-":
 		scan.addToken(token.MINUS)
-		break
 	case "+":
 		scan.addToken(token.PLUS)
-		break
 	case ";":
 		scan.addToken(token.SEMICOLON)
-		break
 	case "*":
 		scan.addToken(token.STAR)
-		break
 
 	//could be 1 or 2 chars
 	case "!":
@@ -75,9 +65,41 @@ func (scan *Scanner) scanToken() {
 		} else {
 			scan.addToken(token.BANG)
 		}
+  case "=":
+    if scan.match("="){
+      scan.addToken(token.EQUAL_EQUAL)
+    }else {
+      scan.addToken(token.EQUAL)
+    }
+
+  case "<":
+    if scan.match("="){
+      scan.addToken(token.LESS_EQUAL)
+    }else{
+      scan.addToken(token.LESS)
+    }
+
+  case ">":
+    if scan.match("="){
+      scan.addToken(token.GREATER_EQUAL)
+    }else{
+      scan.addToken(token.GREATER)
+    }
+
+  case "/":
+  if scan.match("/"){
+      //we hit a comment
+      for scan.peek() != "\n" && !scan.isAtEnd(){
+        scan.advance()
+      }
+    }else{
+      scan.addToken(token.SLASH)
+    }
+
+
 	default:
+    fmt.Printf("WHAT IS IT: %s\n", c)
 		error.CoolError(scan.Line, "Unexpected Character")
-		break
 	}
 }
 
@@ -102,11 +124,11 @@ func (scan *Scanner) match(expected string) bool {
 	return true
 }
 
-func (scan *Scanner) peek() byte {
+func (scan *Scanner) peek() string {
 	if scan.isAtEnd() {
-		return 0
+		return ""
 	}
-	return scan.Source[scan.Current]
+	return string(scan.Source[scan.Current])
 }
 
 func (scan *Scanner) addToken(tok token.TokenEnum) {
