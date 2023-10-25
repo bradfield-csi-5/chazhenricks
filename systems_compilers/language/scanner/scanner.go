@@ -37,68 +37,78 @@ func (scan *Scanner) ScanTokens() []token.Token {
 func (scan *Scanner) scanToken() {
 	c := scan.advance()
 	switch c {
-	case "(":
+	case '(':
 		scan.addToken(token.LEFT_PAREN)
-	case ")":
+	case ')':
 		scan.addToken(token.RIGHT_PAREN)
-	case "{":
+	case '{':
 		scan.addToken(token.LEFT_BRACE)
-	case "}":
+	case '}':
 		scan.addToken(token.RIGHT_BRACE)
-	case ",":
+	case ',':
 		scan.addToken(token.COMMA)
-	case ".":
+	case '.':
 		scan.addToken(token.DOT)
-	case "-":
+	case '-':
 		scan.addToken(token.MINUS)
-	case "+":
+	case '+':
 		scan.addToken(token.PLUS)
-	case ";":
+	case ';':
 		scan.addToken(token.SEMICOLON)
-	case "*":
+	case '*':
 		scan.addToken(token.STAR)
 
 	//could be 1 or 2 chars
-	case "!":
-		if scan.match("=") {
+	case '!':
+		if scan.match('=') {
 			scan.addToken(token.BANG_EQUAL)
 		} else {
 			scan.addToken(token.BANG)
 		}
-  case "=":
-    if scan.match("="){
-      scan.addToken(token.EQUAL_EQUAL)
-    }else {
-      scan.addToken(token.EQUAL)
-    }
+	case '=':
+		if scan.match('=') {
+			scan.addToken(token.EQUAL_EQUAL)
+		} else {
+			scan.addToken(token.EQUAL)
+		}
 
-  case "<":
-    if scan.match("="){
-      scan.addToken(token.LESS_EQUAL)
-    }else{
-      scan.addToken(token.LESS)
-    }
+	case '<':
+		if scan.match('=') {
+			scan.addToken(token.LESS_EQUAL)
+		} else {
+			scan.addToken(token.LESS)
+		}
 
-  case ">":
-    if scan.match("="){
-      scan.addToken(token.GREATER_EQUAL)
-    }else{
-      scan.addToken(token.GREATER)
-    }
+	case '>':
+		if scan.match('=') {
+			scan.addToken(token.GREATER_EQUAL)
+		} else {
+			scan.addToken(token.GREATER)
+		}
 
-  case "/":
-  if scan.match("/"){
-      //we hit a comment
-      for scan.peek() != "\n" && !scan.isAtEnd(){
-        scan.advance()
-      }
-    }else{
-      scan.addToken(token.SLASH)
-    }
+	case '/':
+		if scan.match('/') {
+			//we hit a comment
+			for scan.peek() != "\n" && !scan.isAtEnd() {
+				scan.advance()
+			}
+		} else {
+			scan.addToken(token.SLASH)
+		}
 
-
+	case ' ':
+		fallthrough
+	case '\r':
+		fallthrough
+	case '\t':
+		//ignore spaces
+		return
+	case '\n':
+		scan.Line += 1
+		return
+  case '"': 
 	default:
-    fmt.Printf("WHAT IS IT: %s\n", c)
+		fmt.Printf("WHAT IS IT: %s\n", c)
 		error.CoolError(scan.Line, "Unexpected Character")
 	}
 }
@@ -107,17 +117,17 @@ func HelloScanner() {
 	fmt.Println("hello from scanner")
 }
 
-func (scan *Scanner) advance() string {
-	char := string(scan.Source[scan.Current])
+func (scan *Scanner) advance() byte {
+	char := scan.Source[scan.Current]
 	scan.Current += 1
 	return char
 }
 
-func (scan *Scanner) match(expected string) bool {
+func (scan *Scanner) match(expected byte) bool {
 	if scan.isAtEnd() {
 		return false
 	}
-	if string(scan.Source[scan.Current]) != expected {
+	if scan.Source[scan.Current] != expected {
 		return false
 	}
 	scan.Current += 1
