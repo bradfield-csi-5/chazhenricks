@@ -131,17 +131,17 @@ func (scan *Scanner) string() {
 		scan.advance()
 	}
 
-  if scan.isAtEnd(){
-    error.CoolError(scan.Line, "unterminated string")
-  }
+	if scan.isAtEnd() {
+		error.CoolError(scan.Line, "unterminated string")
+	}
 
-  scan.advance()
-  //get that last " outta here
+	//get that last " outta here
+	scan.advance()
 
 	//once we exit the loop get the string value
 	//+1 and -1 to account for the "" chars
 	strValue := scan.Source[scan.Start+1 : scan.Current-1]
-  scan.addString(strValue)
+	scan.addString(strValue)
 
 }
 
