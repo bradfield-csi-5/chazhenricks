@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	// "language/scanner"
+	"language/error"
 	"os"
 )
 
@@ -24,7 +25,9 @@ func runFile(fileName string) {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("hello file: %s\n", file)
+	run(string(file))
+	error.ExitIfError()
+
 }
 
 func runPrompt() {
@@ -40,6 +43,7 @@ func runPrompt() {
 			break
 		}
 		run(inst)
+		error.ExitIfError()
 	}
 
 }
@@ -49,5 +53,5 @@ func run(source string) {
 	// for _, token := range tokens {
 	// fmt.Printf("TOKEN: %v\n", token)
 	// }
-  fmt.Printf("I RAN IT: %s\n", source)
+	fmt.Printf("I RAN IT: %s\n", source)
 }
