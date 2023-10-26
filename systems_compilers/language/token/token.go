@@ -122,6 +122,8 @@ func (tok TokenEnum) String() string {
 type Token struct {
   Type TokenEnum
   Lexeme string
+  Literal any 
+  Line int
 }
 
 func (tok Token) String() string {

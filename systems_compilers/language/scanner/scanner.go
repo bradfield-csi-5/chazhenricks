@@ -14,6 +14,29 @@ type Scanner struct {
 	Line    int
 }
 
+var keywords map[string]token.TokenEnum
+
+func init() {
+	keywords = map[string]token.TokenEnum{
+		"and":   token.AND,
+		"class": token.CLASS,
+		"else":  token.ELSE,
+		"false": token.FALSE,
+		"for":  token.FOR,
+		"fun":  token.FUN,
+		"if":  token.IF,
+		"nil":  token.NIL,
+		"or":  token.OR,
+		"print":  token.PRINT,
+		"return":  token.RETURN,
+		"super":  token.SUPER,
+		"this":  token.THIS,
+		"true":  token.TRUE,
+		"var":  token.VAR,
+		"while":  token.WHILE,
+	}
+}
+
 func NewScanner(source string) Scanner {
 	return Scanner{
 		Source:  source,
@@ -109,13 +132,34 @@ func (scan *Scanner) scanToken() {
 	case '"':
 		scan.string()
 	default:
-		fmt.Printf("WHAT IS IT: %s\n", c)
-		error.CoolError(scan.Line, "Unexpected Character")
+		if isAlpha(c) {
+			scan.identifier()
+		} else {
+			error.CoolError(scan.Line, "Unexpected Character")
+		}
 	}
 }
 
 func HelloScanner() {
 	fmt.Println("hello from scanner")
+}
+
+//Scanner Private Methods
+
+// handle parsing the reserved words
+func (scan *Scanner) identifier() {
+	//while the next character is still a letter/digit - keep movin along
+	for isAlphaNumeric(scan.peek()) {
+		scan.advance()
+	}
+
+  text := string(scan.Source[scan.Start:scan.Current])
+  identifierType, exists := keywords[text];
+  if exists {
+    scan.addToken(identifierType)
+  }else{
+	scan.addToken(token.IDENTIFIER)
+  }
 }
 
 // we hit an open string character
@@ -141,8 +185,7 @@ func (scan *Scanner) string() {
 	//once we exit the loop get the string value
 	//+1 and -1 to account for the "" chars
 	strValue := scan.Source[scan.Start+1 : scan.Current-1]
-	scan.addString(strValue)
-
+	scan.addTokenLiteral(token.STRING, strValue)
 }
 
 func (scan *Scanner) advance() byte {
@@ -170,13 +213,28 @@ func (scan *Scanner) peek() byte {
 }
 
 func (scan *Scanner) addToken(tok token.TokenEnum) {
-	scan.Tokens = append(scan.Tokens, token.Token{Type: tok, Lexeme: tok.String()})
+	scan.Tokens = append(scan.Tokens, token.Token{Type: tok, Lexeme: tok.String(), Literal: nil, Line: scan.Line})
 }
 
-func (scan *Scanner) addString(val string) {
-	scan.Tokens = append(scan.Tokens, token.Token{Type: token.STRING, Lexeme: val})
+func (scan *Scanner) addTokenLiteral(tok token.TokenEnum, literal any) {
+	scan.Tokens = append(scan.Tokens, token.Token{Type: tok, Lexeme: tok.String(), Literal: literal, Line: scan.Line})
 }
 
 func (scan *Scanner) isAtEnd() bool {
 	return scan.Current >= len(scan.Source)
+}
+
+// misc helpers
+func isAlpha(c byte) bool {
+	return (c >= 'a' && c <= 'z') ||
+		(c >= 'A' && c <= 'Z') ||
+		c == '_'
+}
+
+func isDigit(c byte) bool {
+	return c >= '0' && c <= '9'
+}
+
+func isAlphaNumeric(c byte) bool {
+	return isAlpha(c) || isDigit(c)
 }
