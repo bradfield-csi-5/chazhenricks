@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"language/error"
 	"language/token"
+	"strconv"
 )
 
 type Scanner struct {
@@ -18,21 +19,21 @@ var keywords map[string]token.TokenEnum
 
 func init() {
 	keywords = map[string]token.TokenEnum{
-		"and":   token.AND,
-		"class": token.CLASS,
-		"else":  token.ELSE,
-		"false": token.FALSE,
-		"for":  token.FOR,
-		"fun":  token.FUN,
-		"if":  token.IF,
-		"nil":  token.NIL,
-		"or":  token.OR,
+		"and":    token.AND,
+		"class":  token.CLASS,
+		"else":   token.ELSE,
+		"false":  token.FALSE,
+		"for":    token.FOR,
+		"fun":    token.FUN,
+		"if":     token.IF,
+		"nil":    token.NIL,
+		"or":     token.OR,
 		"print":  token.PRINT,
-		"return":  token.RETURN,
+		"return": token.RETURN,
 		"super":  token.SUPER,
-		"this":  token.THIS,
-		"true":  token.TRUE,
-		"var":  token.VAR,
+		"this":   token.THIS,
+		"true":   token.TRUE,
+		"var":    token.VAR,
 		"while":  token.WHILE,
 	}
 }
@@ -132,7 +133,9 @@ func (scan *Scanner) scanToken() {
 	case '"':
 		scan.string()
 	default:
-		if isAlpha(c) {
+		if isDigit(c) {
+			scan.number()
+		} else if isAlpha(c) {
 			scan.identifier()
 		} else {
 			error.CoolError(scan.Line, "Unexpected Character")
@@ -146,6 +149,29 @@ func HelloScanner() {
 
 //Scanner Private Methods
 
+// handle parsing numbers/floats
+func (scan *Scanner) number() {
+	for isDigit(scan.peek()) {
+		scan.advance()
+	}
+	//if we see a . and the next item after the dot is another number we got a float baby
+	if scan.peek() == '.' && isDigit(scan.peekNext()) {
+		//keep the . as par of the number
+		scan.advance()
+
+		for isDigit(scan.peek()) {
+			scan.advance()
+		}
+	}
+	numberStr := scan.Source[scan.Start:scan.Current]
+	number, err := strconv.ParseFloat(numberStr, 32)
+  //if we get an error trying to parse to float, add it as a string
+	if err != nil {
+		scan.addTokenLiteral(token.NUMBER, numberStr)
+	}
+	scan.addTokenLiteral(token.NUMBER, number)
+}
+
 // handle parsing the reserved words
 func (scan *Scanner) identifier() {
 	//while the next character is still a letter/digit - keep movin along
@@ -153,13 +179,13 @@ func (scan *Scanner) identifier() {
 		scan.advance()
 	}
 
-  text := string(scan.Source[scan.Start:scan.Current])
-  identifierType, exists := keywords[text];
-  if exists {
-    scan.addToken(identifierType)
-  }else{
-	scan.addToken(token.IDENTIFIER)
-  }
+	text := string(scan.Source[scan.Start:scan.Current])
+	identifierType, exists := keywords[text]
+	if exists {
+		scan.addToken(identifierType)
+	} else {
+		scan.addToken(token.IDENTIFIER)
+	}
 }
 
 // we hit an open string character
@@ -210,6 +236,13 @@ func (scan *Scanner) peek() byte {
 		return ' '
 	}
 	return scan.Source[scan.Current]
+}
+
+func (scan *Scanner) peekNext() byte {
+	if scan.Current+1 >= len(scan.Source) {
+		return ' '
+	}
+	return scan.Source[scan.Current+1]
 }
 
 func (scan *Scanner) addToken(tok token.TokenEnum) {
