@@ -24,6 +24,7 @@ func generateBytecode(src string) ([]byte, error) {
 func runVM(bytecode []byte, x, y byte) (byte, error) {
 	// Set up the memory according to the expected layout
 	memory := make([]byte, 256)
+	fmt.Printf("Memory from runVm: %v\n", memory)
 	copy(memory[instructionStart:], bytecode)
 	memory[parameterStart] = x
 	memory[parameterStart+1] = y
