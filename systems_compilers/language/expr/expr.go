@@ -3,17 +3,16 @@ package expr
 import "language/token"
 
 // approximate abstract class in Java
-type Node interface{}
 type Expr interface {
-	Accept(visitor Visitor)
+	Accept(Visitor) interface{}
 }
 
 type Literal struct {
 	Value any
 }
 
-func (lit *Literal) Accept(visitor Visitor) {
-	visitor.VisitLiteral(lit)
+func (lit *Literal) Accept(visitor Visitor) interface{} {
+	return visitor.VisitLiteral(lit)
 }
 
 type Binary struct {
@@ -22,8 +21,8 @@ type Binary struct {
 	Right    Expr
 }
 
-func (bin *Binary) Accept(visitor Visitor) {
-	visitor.VisitBinary(bin)
+func (bin *Binary) Accept(visitor Visitor) interface{} {
+	return visitor.VisitBinary(bin)
 }
 
 type Unary struct {
@@ -31,21 +30,21 @@ type Unary struct {
 	Right    Expr
 }
 
-func (unary *Unary) Accept(visitor Visitor) {
-	visitor.VisitUnary(unary)
+func (unary *Unary) Accept(visitor Visitor) interface{} {
+	return visitor.VisitUnary(unary)
 }
 
 type Grouping struct {
-	Expr Expr
+	Expression Expr
 }
 
-func (group *Grouping) Accept(visitor Visitor) {
-	visitor.VisitGrouping(group)
+func (group *Grouping) Accept(visitor Visitor) interface{} {
+	return visitor.VisitGrouping(group)
 }
 
 type Visitor interface {
-	VisitBinary(binary *Binary)
-	VisitGrouping(grouping *Grouping)
-	VisitLiteral(literal *Literal)
-	VisitUnary(unary *Unary)
+	VisitBinary(binary *Binary) interface{}
+	VisitGrouping(grouping *Grouping) interface{}
+	VisitLiteral(literal *Literal) interface{}
+	VisitUnary(unary *Unary) interface{}
 }
